@@ -18,7 +18,7 @@
     <div>
       <div>
         <checker v-model="personSelect" type="checkbox" default-item-class="p_item" selected-item-class="p_selected">
-          <checker-item v-for="i in 5" :value="i" :key="i">{{i}}</checker-item>
+          <checker-item v-for="i in 5" :value="i" :key="i">&nbsp;&nbsp;&nbsp;{{i}}</checker-item>
         </checker>
       </div>
     </div>
@@ -86,6 +86,8 @@ function getResult (val) {
   padding: 5px 15px;
 }
 .p_selected {
-  border: 1px solid green;
+  /* border: 1px solid green; */
+  background: #ffffff url(../assets/checked.png) no-repeat left;
+  border-color: #f4ea2a; 
 }
 </style>
