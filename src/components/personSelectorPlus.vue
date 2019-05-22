@@ -16,22 +16,29 @@
         ref="search"></search>
     </div>
     <div>
-      
+      <div>
+        <checker v-model="personSelect" type="checkbox" default-item-class="p_item" selected-item-class="p_selected">
+          <checker-item v-for="i in 5" :value="i" :key="i">{{i}}</checker-item>
+        </checker>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { XHeader, Search } from 'vux'
+import { XHeader, Search, Checker, CheckerItem } from 'vux'
 export default {
   components: {
     XHeader,
-    Search
+    Search,
+    Checker,
+    CheckerItem
   },
   data () {
     return {
       results: [],
-      value: 'test'
+      value: 'test',
+      personSelect: ''
     }
   },
   methods: {
@@ -72,5 +79,13 @@ function getResult (val) {
   return rs
 }
 </script>
-<style>
+<style scoped>
+.p_item {
+  display: block;
+  border: 1px solid #ececec;
+  padding: 5px 15px;
+}
+.p_selected {
+  border: 1px solid green;
+}
 </style>
