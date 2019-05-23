@@ -13,13 +13,18 @@
         @on-focus="onFocus"
         @on-cancel="onCancel"
         @on-submit="onSubmit"
-        ref="search"></search>
+        ref="search"
+      ></search>
     </div>
     <div>
       <div>
-        <checker v-model="personSelect" type="checkbox" default-item-class="p_item" selected-item-class="p_selected">
-          <checker-item v-for="i in 5" :value="i" :key="i">&nbsp;&nbsp;&nbsp;{{i}}</checker-item>
-        </checker>
+        <span @click="backLastLevel()">返回</span>
+      </div>
+      <div>
+        <span v-for="p in this.pathList" :key="p.id" @click="selectPath(p)">{{p.name}}/</span>
+      </div>
+      <div v-for="i in tempList" :key="i.id">
+        <input type="checkbox" name="checkBoxInput" @click="checkBoxSelect(i)" :checked="personSelect.indexOf(i.id)>=0"><label @click="chosie(i)">{{i.name}}</label>
       </div>
     </div>
   </div>
@@ -38,7 +43,36 @@ export default {
     return {
       results: [],
       value: 'test',
-      personSelect: ''
+      personSelect: [],
+      personList: [{
+        id: 1,
+        name: '中国电信',
+        children: [{
+          id: 10000,
+          name: '市场线',
+          children: [{
+            id: 100001212,
+            name: '业务支持中心',
+            children: [{
+              id: 200001212,
+              name: '系统研发室',
+              parent: 100001212,
+              children: [{
+                id: 71084750,
+                name: '欧伟轩',
+                parent: 200001212
+              }]
+            }, {
+              id: 200001213,
+              name: '大数据室',
+              parent: 100001212
+            }]
+          }]
+        }
+        ]}
+      ],
+      tempList: [],
+      pathList: []
     }
   },
   methods: {
@@ -65,7 +99,44 @@ export default {
     },
     onCancel () {
       console.log('on cancel')
+    },
+    chosie (item) {
+      if (typeof (item['children']) !== 'undefined') {
+        this.tempList = item['children']
+        this.pathList.push(item)
+      } else {
+        this.personSelect.push(item.id)
+      }
+    },
+    checkBoxSelect (item) {
+      console.log(item)
+    },
+    selectPath (item) {
+      if (item.id !== this.tempList[0]['parent']) {
+        this.tempList = item['children']
+        var flag = false
+        while (!flag) {
+          var temp = this.pathList.pop()
+          if (temp.id === item.id) {
+            this.pathList.push(temp)
+            flag = true
+          }
+        }
+      }
+    },
+    backLastLevel () {
+      if (this.pathList.length > 1) {
+        var temp = this.pathList.pop()
+        temp = this.pathList.pop()
+        // console.log(temp)
+        this.pathList.push(temp)
+        this.tempList = temp['children']
+      }
     }
+  },
+  mounted () {
+    this.tempList = this.personList[0]['children']
+    this.pathList = this.personList
   }
 }
 function getResult (val) {
@@ -88,6 +159,6 @@ function getResult (val) {
 .p_selected {
   /* border: 1px solid green; */
   background: #ffffff url(../assets/checked.png) no-repeat left;
-  border-color: #f4ea2a; 
+  border-color: #f4ea2a;
 }
 </style>
