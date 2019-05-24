@@ -1,6 +1,6 @@
 <template>
   <div>
-    <x-header>This is the page title.</x-header>
+    <x-header>人员选择</x-header>
     <div>
       <search
         @result-click="resultClick"
@@ -17,14 +17,16 @@
       ></search>
     </div>
     <div>
-      <div>
-        <span @click="backLastLevel()">返回</span>
+      <div class="outerBox">
+        <span @click="backLastLevel()" class="backClass">&lt;返回上一级</span>
       </div>
-      <div>
-        <span v-for="p in this.pathList" :key="p.id" @click="selectPath(p)">{{p.name}}/</span>
+      <div class="outerBox">
+        当前位置：<span v-for="p in this.pathList" :key="p.id" @click="selectPath(p)"> <span class="pathClass">{{p.name}}</span> / </span>
       </div>
-      <div v-for="i in tempList" :key="i.id">
-        <input type="checkbox" name="checkBoxInput" @click="checkBoxSelect(i)" :checked="personSelect.indexOf(i.id)>=0"><label @click="chosie(i)">{{i.name}}</label>
+      <div class="outerBox">
+        <div v-for="i in tempList" :key="i.id" >
+          <input type="checkbox" class="checkBoxClass" name="checkBoxInput" @click="checkBoxSelect(i)" :checked="personSelect.indexOf(i.id)>=0"><label class="labelClass" @click="chosie(i)">{{i.name}}</label>
+        </div>
       </div>
     </div>
   </div>
@@ -46,7 +48,7 @@ export default {
       personSelect: [],
       personList: [{
         id: 1,
-        name: '中国电信',
+        name: '中山电信',
         children: [{
           id: 10000,
           name: '市场线',
@@ -105,11 +107,40 @@ export default {
         this.tempList = item['children']
         this.pathList.push(item)
       } else {
-        this.personSelect.push(item.id)
+        var index = this.personSelect.indexOf(item.id)
+        if (index >= 0) {
+          this.personSelect.splice(index, 1)
+        } else {
+          this.personSelect.push(item.id)
+        }
       }
     },
     checkBoxSelect (item) {
-      console.log(item)
+      var itemStack = []
+      itemStack.push(item)
+
+      // false->不存在
+      var flag = false
+      if (this.personSelect.indexOf(item['id']) >= 0) {
+        flag = true
+      }
+
+      while (itemStack.length > 0) {
+        var temp = itemStack.pop()
+        if (typeof (temp['children']) !== 'undefined') {
+          var childrenList = temp['children']
+          var child
+          for (child in childrenList) {
+            itemStack.push(child)
+            if (flag) {
+              this.popFromPersonSelect(child['id'])
+            } else {
+              console.log(child)
+              this.pushIntoPersonSelect(child['id'])
+            }
+          }
+        }
+      }
     },
     selectPath (item) {
       if (item.id !== this.tempList[0]['parent']) {
@@ -131,6 +162,17 @@ export default {
         // console.log(temp)
         this.pathList.push(temp)
         this.tempList = temp['children']
+      }
+    },
+    pushIntoPersonSelect (id) {
+      if (!this.personSelect.indexOf(id) >= 0) {
+        this.personSelect.push(id)
+      }
+    },
+    popFromPersonSelect (id) {
+      var index = this.personSelect.indexOf(id)
+      if (index >= 0) {
+        this.personSelect.splice(index, 1)
       }
     }
   },
@@ -160,5 +202,28 @@ function getResult (val) {
   /* border: 1px solid green; */
   background: #ffffff url(../assets/checked.png) no-repeat left;
   border-color: #f4ea2a;
+}
+.outerBox {
+  padding: 8px 10px;
+  overflow: hidden;
+}
+.backClass {
+  color: #A4E36A;
+}
+.checkBoxClass {
+  height: 18px;
+  width: 18px;
+}
+.labelClass {
+  font-size: 18px;
+  line-height: 18px;
+  height: 20px;
+  position: relative;
+  top: -3px;
+  margin-left: 10px;
+}
+.pathClass {
+  text-decoration: underline;
+  color: #A4E36A;
 }
 </style>
