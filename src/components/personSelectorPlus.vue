@@ -74,7 +74,8 @@ export default {
         ]}
       ],
       tempList: [],
-      pathList: []
+      pathList: [],
+      selectDict: {}
     }
   },
   methods: {
@@ -109,9 +110,9 @@ export default {
       } else {
         var index = this.personSelect.indexOf(item.id)
         if (index >= 0) {
-          this.personSelect.splice(index, 1)
+          this.popFromPersonSelect(item)
         } else {
-          this.personSelect.push(item.id)
+          this.pushIntoPersonSelect(item)
         }
       }
     },
@@ -119,24 +120,27 @@ export default {
       var itemStack = []
       itemStack.push(item)
 
-      // false->不存在
+      // false->未选择
       var flag = false
       if (this.personSelect.indexOf(item['id']) >= 0) {
         flag = true
+        this.popFromPersonSelect(item)
+      } else {
+        this.pushIntoPersonSelect(item)
       }
 
       while (itemStack.length > 0) {
         var temp = itemStack.pop()
         if (typeof (temp['children']) !== 'undefined') {
           var childrenList = temp['children']
-          var child
-          for (child in childrenList) {
+          var i
+          for (i = 0; i < childrenList.length; i++) {
+            var child = childrenList[i]
             itemStack.push(child)
             if (flag) {
-              this.popFromPersonSelect(child['id'])
+              this.popFromPersonSelect(child)
             } else {
-              console.log(child)
-              this.pushIntoPersonSelect(child['id'])
+              this.pushIntoPersonSelect(child)
             }
           }
         }
@@ -159,20 +163,27 @@ export default {
       if (this.pathList.length > 1) {
         var temp = this.pathList.pop()
         temp = this.pathList.pop()
-        // console.log(temp)
         this.pathList.push(temp)
         this.tempList = temp['children']
       }
     },
-    pushIntoPersonSelect (id) {
-      if (!this.personSelect.indexOf(id) >= 0) {
+    pushIntoPersonSelect (item) {
+      var id = item['id']
+      if (this.personSelect.indexOf(id) < 0) {
         this.personSelect.push(id)
+        if (typeof (item['children']) === 'undefined') {
+          this.selectDict[id] = item
+        }
       }
     },
-    popFromPersonSelect (id) {
+    popFromPersonSelect (item) {
+      var id = item['id']
       var index = this.personSelect.indexOf(id)
       if (index >= 0) {
         this.personSelect.splice(index, 1)
+        if (typeof (item['children']) === 'undefined') {
+          delete this.selectDict[id]
+        }
       }
     }
   },
