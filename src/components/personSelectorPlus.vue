@@ -29,50 +29,57 @@
         </div>
       </div>
     </div>
+    <div style="padding:10px 10px;">
+      <x-button type="primary" mini @click.native="buttonClick">确定</x-button>
+    </div>
   </div>
 </template>
 
 <script>
-import { XHeader, Search, Checker, CheckerItem } from 'vux'
+import { XHeader, Search, Checker, CheckerItem, XButton } from 'vux'
 export default {
   components: {
     XHeader,
     Search,
     Checker,
-    CheckerItem
+    CheckerItem,
+    XButton
+  },
+  props: {
+    personList: Array
   },
   data () {
     return {
       results: [],
       value: 'test',
       personSelect: [],
-      personList: [{
-        id: 1,
-        name: '中山电信',
-        children: [{
-          id: 10000,
-          name: '市场线',
-          children: [{
-            id: 100001212,
-            name: '业务支持中心',
-            children: [{
-              id: 200001212,
-              name: '系统研发室',
-              parent: 100001212,
-              children: [{
-                id: 71084750,
-                name: '欧伟轩',
-                parent: 200001212
-              }]
-            }, {
-              id: 200001213,
-              name: '大数据室',
-              parent: 100001212
-            }]
-          }]
-        }
-        ]}
-      ],
+      // personList: [{
+      //   id: 1,
+      //   name: '中山电信',
+      //   children: [{
+      //     id: 10000,
+      //     name: '市场线',
+      //     children: [{
+      //       id: 100001212,
+      //       name: '业务支持中心',
+      //       children: [{
+      //         id: 200001212,
+      //         name: '系统研发室',
+      //         parent: 100001212,
+      //         children: [{
+      //           id: 71084750,
+      //           name: '欧伟轩',
+      //           parent: 200001212
+      //         }]
+      //       }, {
+      //         id: 200001213,
+      //         name: '大数据室',
+      //         parent: 100001212
+      //       }]
+      //     }]
+      //   }
+      //   ]}
+      // ],
       tempList: [],
       pathList: [],
       selectDict: {}
@@ -185,6 +192,9 @@ export default {
           delete this.selectDict[id]
         }
       }
+    },
+    buttonClick () {
+      this.$emit('selectedPerson', this.selectDict)
     }
   },
   mounted () {
