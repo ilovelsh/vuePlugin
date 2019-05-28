@@ -30,7 +30,14 @@
       </div>
     </div>
     <div style="padding:10px 10px;">
-      <x-button type="primary" mini @click.native="buttonClick">确定</x-button>
+    </div>
+    <div class="bottomTab">
+      <div class="bottomLeft">
+        <span class="choiseName" v-for="p in this.selectDict" :key="p.id">{{p.name}}</span>
+      </div>
+      <div class="bottomRight">
+        <x-button type="primary" mini @click.native="buttonClick">确定</x-button>
+      </div>
     </div>
   </div>
 </template>
@@ -45,41 +52,41 @@ export default {
     CheckerItem,
     XButton
   },
-  props: {
-    personList: Array
-  },
+  // props: {
+  //   personList: Array
+  // },
   data () {
     return {
       results: [],
       value: 'test',
       personSelect: [],
-      // personList: [{
-      //   id: 1,
-      //   name: '中山电信',
-      //   children: [{
-      //     id: 10000,
-      //     name: '市场线',
-      //     children: [{
-      //       id: 100001212,
-      //       name: '业务支持中心',
-      //       children: [{
-      //         id: 200001212,
-      //         name: '系统研发室',
-      //         parent: 100001212,
-      //         children: [{
-      //           id: 71084750,
-      //           name: '欧伟轩',
-      //           parent: 200001212
-      //         }]
-      //       }, {
-      //         id: 200001213,
-      //         name: '大数据室',
-      //         parent: 100001212
-      //       }]
-      //     }]
-      //   }
-      //   ]}
-      // ],
+      personList: [{
+        id: 1,
+        name: '中山电信',
+        children: [{
+          id: 10000,
+          name: '市场线',
+          children: [{
+            id: 100001212,
+            name: '业务支持中心',
+            children: [{
+              id: 200001212,
+              name: '系统研发室',
+              parent: 100001212,
+              children: [{
+                id: 71084750,
+                name: '欧伟轩',
+                parent: 200001212
+              }]
+            }, {
+              id: 200001213,
+              name: '大数据室',
+              parent: 100001212
+            }]
+          }]
+        }
+        ]}
+      ],
       tempList: [],
       pathList: [],
       selectDict: {}
@@ -213,17 +220,7 @@ function getResult (val) {
   return rs
 }
 </script>
-<style scoped>
-.p_item {
-  display: block;
-  border: 1px solid #ececec;
-  padding: 5px 15px;
-}
-.p_selected {
-  /* border: 1px solid green; */
-  background: #ffffff url(../assets/checked.png) no-repeat left;
-  border-color: #f4ea2a;
-}
+<style>
 .outerBox {
   padding: 8px 10px;
   overflow: hidden;
@@ -246,5 +243,28 @@ function getResult (val) {
 .pathClass {
   text-decoration: underline;
   color: #A4E36A;
+}
+.bottomTab {
+  position: absolute;
+  bottom: 0px;
+  height: 60px;
+  width: 100%;
+  overflow: hidden;
+  border-top: 1px solid grey;
+}
+.bottomLeft {
+  float: left;
+  padding: 5px;
+}
+.bottomRight {
+  float: right;
+  width: 80px;
+  height: 60px;
+  background-color: whitesmoke;
+  text-align: center;
+  line-height: 60px;
+}
+.choiseName {
+  padding: 5px;
 }
 </style>
