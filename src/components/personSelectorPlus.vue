@@ -142,7 +142,6 @@ export default {
       } else {
         this.pushIntoPersonSelect(item)
       }
-
       while (itemStack.length > 0) {
         var temp = itemStack.pop()
         if (typeof (temp['children']) !== 'undefined') {
@@ -202,6 +201,13 @@ export default {
     },
     buttonClick () {
       this.$emit('selectedPerson', this.selectDict)
+    }
+  },
+  computed: {
+    checked: {
+      set: function (node) {
+        console.log(node)
+      }
     }
   },
   mounted () {
