@@ -25,7 +25,8 @@
       </div>
       <div class="outerBox">
         <div v-for="i in tempList" :key="i.id" >
-          <input type="checkbox" class="checkBoxClass" name="checkBoxInput" @click="checkBoxSelect(i)" :checked="personSelect.indexOf(i.id)>=0"><label class="labelClass" @click="chosie(i)">{{i.name}}</label>
+          <!-- <input type="checkbox" class="checkBoxClass" name="checkBoxInput" @click="checkBoxSelect(i)" :checked="personSelect.indexOf(i.id)>=0"><label class="labelClass" @click="chosie(i)">{{i.name}}</label> -->
+          <input type="checkbox" class="checkBoxClass" name="checkBoxInput" @click="checkBoxSelect(i)" :checked="checked(i)"><label class="labelClass" @click="chosie(i)">{{i.name}}</label>
         </div>
       </div>
     </div>
@@ -204,9 +205,21 @@ export default {
     }
   },
   computed: {
-    checked: {
-      set: function (node) {
-        console.log(node)
+    checked () {
+      return function (node) {
+        if (typeof (node['children']) !== 'undefined') {
+          var children = node['children']
+          var i
+          for (i = 0; i < children.length; i++) {
+            var tempId = children[i]['id']
+            if (this.personSelect.indexOf(tempId) < 0) {
+              return false
+            }
+          }
+        } else if (this.personSelect.indexOf(node['id']) < 0) {
+          return false
+        }
+        return true
       }
     }
   },
