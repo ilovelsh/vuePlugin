@@ -213,10 +213,14 @@ export default {
           for (i = 0; i < children.length; i++) {
             var tempId = children[i]['id']
             if (this.personSelect.indexOf(tempId) < 0) {
+              this.popFromPersonSelect(node)
               return false
             }
           }
+          this.pushIntoPersonSelect(node)
+          return true
         } else if (this.personSelect.indexOf(node['id']) < 0) {
+          this.popFromPersonSelect(node)
           return false
         }
         return true
