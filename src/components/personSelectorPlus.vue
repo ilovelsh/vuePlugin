@@ -1,7 +1,7 @@
 <template>
   <div>
     <x-header>人员选择</x-header>
-    <div>
+    <!-- <div>
       <search
         @result-click="resultClick"
         @on-change="getResult"
@@ -15,16 +15,16 @@
         @on-submit="onSubmit"
         ref="search"
       ></search>
-    </div>
+    </div> -->
     <div>
-      <div class="outerBox">
+      <!-- <div class="outerBox">
         <span @click="backLastLevel()" class="backClass">&lt;返回上一级</span>
+      </div> -->
+      <div class="outerBox pathBox">
+        <span v-for="p in this.pathList" :key="p.id" @click="selectPath(p)"> <span class="pathClass">{{p.name}}</span> / </span>
       </div>
-      <div class="outerBox">
-        当前位置：<span v-for="p in this.pathList" :key="p.id" @click="selectPath(p)"> <span class="pathClass">{{p.name}}</span> / </span>
-      </div>
-      <div class="outerBox">
-        <div v-for="i in tempList" :key="i.id" >
+      <div class="itemBox">
+        <div v-for="i in tempList" :key="i.id" class="itemChildBox">
           <!-- <input type="checkbox" class="checkBoxClass" name="checkBoxInput" @click="checkBoxSelect(i)" :checked="personSelect.indexOf(i.id)>=0"><label class="labelClass" @click="chosie(i)">{{i.name}}</label> -->
           <input type="checkbox" class="checkBoxClass" name="checkBoxInput" @click="checkBoxSelect(i)" :checked="checked(i)"><label class="labelClass" @click="chosie(i)">{{i.name}}</label>
         </div>
@@ -256,16 +256,17 @@ function getResult (val) {
   width: 18px;
 }
 .labelClass {
-  font-size: 18px;
+  font-size: 20px;
   line-height: 18px;
-  height: 20px;
+  height: 30px;
   position: relative;
   top: -3px;
   margin-left: 10px;
 }
 .pathClass {
-  text-decoration: underline;
-  color: #A4E36A;
+  /* text-decoration: underline; */
+  color: blue;
+  font-size: 18px;
 }
 .bottomTab {
   position: absolute;
@@ -275,7 +276,7 @@ function getResult (val) {
   overflow: hidden;
   border-top: 1px solid grey;
 }
-.bottomLeft {
+.bottomLeft { 
   float: left;
   padding: 5px;
 }
@@ -289,5 +290,15 @@ function getResult (val) {
 }
 .choiseName {
   padding: 5px;
+}
+.pathBox {
+  border-bottom: 1px solid black;
+}
+.itemBox {
+  padding: 10px 20px;
+  overflow: hidden;
+}
+.itemChildBox {
+  padding: 10px;
 }
 </style>
