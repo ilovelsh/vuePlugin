@@ -1,9 +1,8 @@
 <template>
   <div>
     <x-header>人员选择</x-header>
-    <!-- <div>
+    <div>
       <search
-        @result-click="resultClick"
         @on-change="getResult"
         :results="results"
         v-model="value"
@@ -15,7 +14,7 @@
         @on-submit="onSubmit"
         ref="search"
       ></search>
-    </div> -->
+    </div>
     <div>
       <!-- <div class="outerBox">
         <span @click="backLastLevel()" class="backClass">&lt;返回上一级</span>
@@ -24,6 +23,9 @@
         <span v-for="p in this.pathList" :key="p.id" @click="selectPath(p)"> <span class="pathClass">{{p.name}}</span> / </span>
       </div>
       <div class="itemBox">
+        <!-- <div class="itemChildBox">
+          <span @click="backLastLevel()" class="backClass">返回上一级</span>
+        </div> -->
         <div v-for="i in tempList" :key="i.id" class="itemChildBox">
           <!-- <input type="checkbox" class="checkBoxClass" name="checkBoxInput" @click="checkBoxSelect(i)" :checked="personSelect.indexOf(i.id)>=0"><label class="labelClass" @click="chosie(i)">{{i.name}}</label> -->
           <input type="checkbox" class="checkBoxClass" name="checkBoxInput" @click="checkBoxSelect(i)" :checked="checked(i)"><label class="labelClass" @click="chosie(i)">{{i.name}}</label>
@@ -59,38 +61,13 @@ export default {
   data () {
     return {
       results: [],
-      value: 'test',
+      value: '',
       personSelect: [],
-      personList: [{
-        id: 1,
-        name: '中山电信',
-        children: [{
-          id: 10000,
-          name: '市场线',
-          children: [{
-            id: 100001212,
-            name: '业务支持中心',
-            children: [{
-              id: 200001212,
-              name: '系统研发室',
-              parent: 100001212,
-              children: [{
-                id: 71084750,
-                name: '欧伟轩',
-                parent: 200001212
-              }]
-            }, {
-              id: 200001213,
-              name: '大数据室',
-              parent: 100001212
-            }]
-          }]
-        }
-        ]}
-      ],
+      personList: [],
       tempList: [],
       pathList: [],
-      selectDict: {}
+      selectDict: {},
+      searchSave: []
     }
   },
   methods: {
@@ -102,7 +79,41 @@ export default {
     },
     getResult (val) {
       console.log('on-change', val)
-      this.results = val ? getResult(this.value) : []
+      if (this.searchSave.length > 0) {
+        this.tempList = this.searchSave
+      } else {
+        this.searchSave = this.tempList
+      }
+      var tempsave = this.tempList
+      if (val !== '') {
+        var searchList = []
+        var searchStack = []
+
+        var templistLen = tempsave.length
+        for (var i = 0; i < templistLen; i++) {
+          searchStack.push(tempsave[i])
+        }
+        while (searchStack.length > 0) {
+          var temp = searchStack.pop()
+          if (typeof (temp['children']) !== 'undefined') {
+            var childrenList = temp['children']
+            var j
+            for (j = 0; j < childrenList.length; j++) {
+              var child = childrenList[j]
+              searchStack.push(child)
+            }
+          } else {
+            if (temp['name'].indexOf(val) >= 0) {
+              searchList.push(temp)
+            }
+          }
+        }
+        this.tempList = searchList
+      } else {
+        if (this.searchSave.length > 0) {
+          this.tempList = this.searchSave
+        }
+      }
     },
     onSubmit () {
       this.$refs.search.setBlur()
@@ -117,6 +128,8 @@ export default {
     },
     onCancel () {
       console.log('on cancel')
+      this.tempList = this.personList[0]['children']
+      this.pathList = this.personList
     },
     chosie (item) {
       if (typeof (item['children']) !== 'undefined') {
@@ -202,6 +215,18 @@ export default {
     },
     buttonClick () {
       this.$emit('selectedPerson', this.selectDict)
+    },
+    getAllStaff () {
+      // var url = 'https://it.zsnet.net.cn/bbbooker/backend/adminHandler/getAllStaff'
+      var url = '/adminHandler/getAllStaff'
+      this.$http({
+        url: url,
+        method: 'POST'
+      }).then(response => {
+        this.personList = [response.data.staffList]
+        this.tempList = this.personList[0]['children']
+        this.pathList = this.personList
+      })
     }
   },
   computed: {
@@ -225,22 +250,18 @@ export default {
         }
         return true
       }
+    },
+    tempListIds () {
+      var list = []
+      for (var i = 0; i < this.tempList.length; i++) {
+        list.push(this.tempList[i]['id'])
+      }
+      return list
     }
   },
   mounted () {
-    this.tempList = this.personList[0]['children']
-    this.pathList = this.personList
+    this.getAllStaff()
   }
-}
-function getResult (val) {
-  let rs = []
-  for (let i = 0; i < 20; i++) {
-    rs.push({
-      title: `${val} result: ${i + 1} `,
-      other: i
-    })
-  }
-  return rs
 }
 </script>
 <style>
@@ -249,42 +270,51 @@ function getResult (val) {
   overflow: hidden;
 }
 .backClass {
-  color: #A4E36A;
+  margin-left: 30px;
 }
 .checkBoxClass {
   height: 18px;
   width: 18px;
 }
 .labelClass {
-  font-size: 20px;
+  font-size: 18px;
   line-height: 18px;
   height: 30px;
   position: relative;
   top: -3px;
   margin-left: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 300px;
 }
 .pathClass {
   /* text-decoration: underline; */
-  color: blue;
   font-size: 18px;
 }
 .bottomTab {
-  position: absolute;
+  position: fixed;
   bottom: 0px;
   height: 60px;
   width: 100%;
   overflow: hidden;
   border-top: 1px solid grey;
+  z-index: 1000;
+  background-color: antiquewhite;
 }
 .bottomLeft { 
   float: left;
   padding: 5px;
+  overflow: hidden;
+  width: 285px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
 }
 .bottomRight {
   float: right;
   width: 80px;
   height: 60px;
-  background-color: whitesmoke;
   text-align: center;
   line-height: 60px;
 }
@@ -297,8 +327,13 @@ function getResult (val) {
 .itemBox {
   padding: 10px 20px;
   overflow: hidden;
+  margin-bottom: 60px;
 }
 .itemChildBox {
-  padding: 10px;
+  padding: 5px;
+  overflow: hidden;
+  width: 420px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 </style>

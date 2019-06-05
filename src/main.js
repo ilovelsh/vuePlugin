@@ -7,6 +7,9 @@ import App from './App'
 import Home from '@/components/HelloFromVux'
 import psPlus from '@/components/personSelectorPlus'
 
+import { AjaxPlugin } from 'vux'
+Vue.use(AjaxPlugin)
+
 Vue.use(VueRouter)
 
 const routes = [{
