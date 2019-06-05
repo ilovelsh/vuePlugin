@@ -4,14 +4,11 @@
     <div>
       <search
         @on-change="getResult"
-        :results="results"
         v-model="value"
         position="absolute"
         auto-scroll-to-top
         top="46px"
-        @on-focus="onFocus"
         @on-cancel="onCancel"
-        @on-submit="onSubmit"
         ref="search"
       ></search>
     </div>
@@ -36,7 +33,7 @@
     </div>
     <div class="bottomTab">
       <div class="bottomLeft">
-        <span class="choiseName" v-for="p in this.selectDict" :key="p.id">{{p.name}}</span>
+        <span class="choiseName" v-for="p in this.selectDict" :key="p.id">{{p.name}}、</span>
       </div>
       <div class="bottomRight">
         <x-button type="primary" mini @click.native="buttonClick">确定</x-button>
@@ -71,14 +68,7 @@ export default {
     }
   },
   methods: {
-    setFocus () {
-      this.$refs.search.setFocus()
-    },
-    resultClick (item) {
-      window.alert('you click the result item: ' + JSON.stringify(item))
-    },
     getResult (val) {
-      console.log('on-change', val)
       if (this.searchSave.length > 0) {
         this.tempList = this.searchSave
       } else {
@@ -115,19 +105,7 @@ export default {
         }
       }
     },
-    onSubmit () {
-      this.$refs.search.setBlur()
-      this.$vux.toast.show({
-        type: 'text',
-        position: 'top',
-        text: 'on submit'
-      })
-    },
-    onFocus () {
-      console.log('on focus')
-    },
     onCancel () {
-      console.log('on cancel')
       this.tempList = this.personList[0]['children']
       this.pathList = this.personList
     },
@@ -295,12 +273,12 @@ export default {
 .bottomTab {
   position: fixed;
   bottom: 0px;
-  height: 60px;
+  height: 80px;
   width: 100%;
   overflow: hidden;
   border-top: 1px solid grey;
   z-index: 1000;
-  background-color: antiquewhite;
+  background-color: rgb(230, 228, 228);
 }
 .bottomLeft { 
   float: left;
@@ -314,12 +292,12 @@ export default {
 .bottomRight {
   float: right;
   width: 80px;
-  height: 60px;
+  height: 80px;
   text-align: center;
-  line-height: 60px;
+  line-height: 80px;
 }
 .choiseName {
-  padding: 5px;
+  padding: 1px;
 }
 .pathBox {
   border-bottom: 1px solid black;
